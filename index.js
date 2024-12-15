@@ -183,47 +183,70 @@ function sortStockPricing(stock1, stock2, pricing) {
 app.get('/stocks/sort/pricing', (req, res) => {
   let pricing = req.query.pricing;
   let stocksCopy = stocks.slice();
-  let sortedStocks = stocksCopy.sort((stock1, stock2) => sortStockPricing(stock1, stock2, pricing));
+  let sortedStocks = stocksCopy.sort((stock1, stock2) =>
+    sortStockPricing(stock1, stock2, pricing)
+  );
   res.json({ stocks: sortedStocks });
 });
 
 // Endpoint 2: Get the stocks sorted based on their Growth.
-function sortStockGrowth(stock1, stock2) {
-  return stock1.growth - stock2.growth;
+function sortStockGrowth(stock1, stock2, growth) {
+  if (growth === 'low-to-high') {
+    return stock1.growth - stock2.growth;
+  } else if (growth === 'high-to-low') {
+    return stock2.growth - stock1.growth;
+  }
 }
 
 app.get('/stocks/sort/growth', (req, res) => {
+  let growth = req.query.growth;
   let stocksCopy = stocks.slice();
-  let sortedStocks = stocksCopy.sort(sortStockGrowth);
+  let sortedStocks = stocksCopy.sort((stock1, stock2) =>
+    sortStockGrowth(stock1, stock2, growth)
+  );
   res.json({ stocks: sortedStocks });
 });
 
 // Endpoint 3: Filter the stocks based on the 2 Stock Exchange (NSE. and BSE)
 function filterByExchange(stock, exchange) {
-  return stock.exchange.toLowerCase() === exchange.toLowerCase();
+  if (exchange === 'nse') {
+    return stock.exchange.toLowerCase() === 'nse';
+  } else if (exchange === 'bse') {
+    return stock.exchange.toLowerCase() === 'bse';
+  }
 }
 
-app.get('/stocks/filter/exchange/:exchange', (req, res) => {
-  let exchange = req.params.exchange;
-  let sortedStocks = stocks.filter((stock)=>filterByExchange(stock, exchange));
-  res.json({stocks: sortedStocks});
+app.get('/stocks/filter/exchange', (req, res) => {
+  let exchange = req.query.exchange;
+  let sortedStocks = stocks.filter((stock) =>
+    filterByExchange(stock, exchange)
+  );
+  res.json({ stocks: sortedStocks });
 });
 
 // Endpoint 4: Filter the stocks based on the Industrial Sector.
 function filterByIndustry(stock, industry) {
-  return stock.industry.toLowerCase() === industry.toLowerCase();
+  if (industry === 'finance') {
+    return stock.industry.toLowerCase() === 'finance';
+  } else if (industry === 'pharma') {
+    return stock.industry.toLowerCase() === 'pharma';
+  } else if (industry === 'power') {
+    return stock.industry.toLowerCase() === 'power';
+  }
 }
 
-app.get('/stocks/filter/industry/:industry', (req, res) => {
-  let industry = req.params.industry;
-  let sortedStocks = stocks.filter((stock)=>filterByIndustry(stock, industry));
-  res.json({stocks: sortedStocks});
+app.get('/stocks/filter/industry', (req, res) => {
+  let industry = req.query.industry;
+  let sortedStocks = stocks.filter((stock) =>
+    filterByIndustry(stock, industry)
+  );
+  res.json({ stocks: sortedStocks });
 });
 
 // Endpoint 5: Send all available stocks
 
 app.get('/stocks', (req, res) => {
-  res.json(stocks);
+  res.json({ stocks: stocks });
 });
 
 app.listen(port, () => {

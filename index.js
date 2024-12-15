@@ -172,13 +172,18 @@ let stocks = [
 ];
 
 // Endpoint 1: Get the stocks sorted by pricing
-function sortStockPricing(stock1, stock2) {
-  return stock1.price - stock2.price;
+function sortStockPricing(stock1, stock2, pricing) {
+  if (pricing === 'low-to-high') {
+    return stock1.price - stock2.price;
+  } else if (pricing === 'high-to-low') {
+    return stock2.price - stock1.price;
+  }
 }
 
 app.get('/stocks/sort/pricing', (req, res) => {
+  let pricing = req.query.pricing;
   let stocksCopy = stocks.slice();
-  let sortedStocks = stocksCopy.sort(sortStockPricing);
+  let sortedStocks = stocksCopy.sort((stock1, stock2) => sortStockPricing(stock1, stock2, pricing));
   res.json({ stocks: sortedStocks });
 });
 

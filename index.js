@@ -246,7 +246,8 @@ app.get('/stocks/filter/industry', (req, res) => {
 // Endpoint 5: Send all available stocks
 
 app.get('/stocks', (req, res) => {
-  res.json(stocks);
+  let sortedStocks = stocks;
+  res.json({ stocks: sortedStocks });
 });
 
 app.listen(port, () => {
